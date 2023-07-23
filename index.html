@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+
+
+
+</head>
+
+<body>
+
+  <!-- kendi apimizden hava tahminlerini çekeceğiz. -->
+
+  <div id="spinner" style="margin:40px" class="spinner-border" role="status">
+    <span class="visually-hidden">Loading...</span>
+  </div>
+
+  <div id="weathers"></div>
+
+  <!-- date format işlemlerinde kullandığımız kütüphane -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment.min.js"></script>
+
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.0/jquery.min.js"
+    integrity="sha512-3gJwYpMe3QewGELv8k/BX9vcqhryRdzRMxVfq6ngyWXwo03GFEzjsUm8Q7RZcHPHksttq7/GFoxjCVUjkjvPdw=="
+    crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+    crossorigin="anonymous"></script>
+
+
+
+
+  <script>
+    $(document).ready(function () {
+      // sayfa açıldığı gibi ajax ile git veri çek
+
+      $.ajax({
+        method: 'GET',
+        url: 'https://localhost:7091/WeatherForecast',
+        beforeSend: function () { // veri gönderilmeden önce
+          // $('#loading').text("... loading");
+          $('#spinner').show(); // display
+        },
+        success: function (response) {
+
+          // 3sn beklemeli ekrana veriyi bas.
+
+          setTimeout(() => {
+
+            console.log("data", response);
+            const element = $('#weathers');
+            $.each(response, (index, item) => {
+              element.append(`<div>${item.summary} - ${moment(item.date).format('DD/MM/yyyy HH:mm')}</div>`);
+              // element.append("<div>" + item.summary + item.date+ "</div>");
+            });
+
+          }, 3000);
+
+
+        },
+        error: function (err) {
+          console.log("err", err);
+        },
+        complete: function () { // veri çekilip iş bitiminde burası çağırılır.
+          console.log("deneme-1");
+
+          setTimeout(() => {
+            // $('#loading').text("");
+            $('#spinner').hide();
+          }, 3000);
+
+
+        }
+      })
+
+    })
+
+  </script>
+</body>
+
+</html>
