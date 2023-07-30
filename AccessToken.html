@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+</head>
+
+<body>
+
+  <button class="btn btn-primary" onclick="GetToken()">Token Getir</button>
+  <button class="btn btn-warning" onclick="AuthorizedResult()">Only Authorized</button>
+  <button class="btn btn-default" onclick="OnlyAdminResult()">Admin Result</button>
+
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.0/jquery.min.js"
+    integrity="sha512-3gJwYpMe3QewGELv8k/BX9vcqhryRdzRMxVfq6ngyWXwo03GFEzjsUm8Q7RZcHPHksttq7/GFoxjCVUjkjvPdw=="
+    crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+    crossorigin="anonymous"></script>
+
+  <script>
+
+    // butona basılınca token getir.
+    function GetToken() {
+      $.ajax({
+        method: 'POST',
+        url: 'https://localhost:7091/api/Tokens',
+        data: JSON.stringify({ username: 'ugur', pass: 'admin' }),
+        contentType: 'application/json',
+        success: function (response) {
+          console.log('response', response);
+          // token bir yerde saklanmalı
+          // başka bir bıutona basınca token headerdan göndermek lazım
+          localStorage.setItem('token', response.token);
+          // localStorage.setItem('token', repsonse);
+          // localStorage.removeItem('token'); silme kodu
+        },
+        error: function (err) {
+          console.log('err', err);
+        }
+      })
+    }
+
+    function AuthorizedResult() {
+
+      $.ajax({
+        method: 'GET',
+        url: 'https://localhost:7091/api/Resources/onlyAuthenticatedUser',
+        beforeSend: function (xhr) {
+          // xhr xmlhttprequest aslında request nesnesine eriştik.
+          const token = localStorage.getItem('token');
+          xhr.setRequestHeader('Authorization', `Bearer ${token}`);
+          // isteği atamadan önce araya girip isteği göndereceğim header değerine token eklettim.
+        },
+        success: function (response) {
+          console.log("mesaj", response);
+        },
+        error: function (err) {
+          console.log("err", err);
+        }
+      })
+
+    }
+
+  </script>
+
+</body>
+
+</html>
